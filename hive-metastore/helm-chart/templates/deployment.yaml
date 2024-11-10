@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metastore
+  labels:
+    app: trino-analytics
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: metastore
+  template:
+    metadata:
+      labels:
+        app: metastore
+    spec:
+      enableServiceLinks: false
+      serviceAccountName: {{ .Values.serviceAccountName }}
+      containers:
+        - name: metastore
+          image: {{ .Values.image }}
+          ports:
+          - containerPort: 9083
+          volumeMounts:
+            - name: configs
+              mountPath: /opt/hive-metastore/conf
+
+      volumes:
+        - name: configs
+          configMap:
+            name: metastore-configs

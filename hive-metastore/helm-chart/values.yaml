@@ -1,0 +1,6 @@
+image: "ghcr.io/binayakd/metastore:4.0.0-hadoop-3.4.0"
+dbUrl: "jdbc:postgresql://trino-analytics.cnmypp0m660r.ap-south-1.rds.amazonaws.com:5432/trino_on_eks"
+dbUser: trino_on_eks
+dbDriver: "org.postgresql.Driver"
+s3Bucket: "s3://trino-analytics"
+

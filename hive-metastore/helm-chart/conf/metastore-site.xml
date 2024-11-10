@@ -1,0 +1,38 @@
+<configuration>
+    <property>
+        <name>metastore.thrift.uris</name>
+        <value>thrift://0.0.0.0:9083</value>
+    </property>
+    <property>
+        <name>metastore.thrift.port</name>
+        <value>9083</value>
+    </property>
+    <property>
+        <name>javax.jdo.option.ConnectionURL</name>
+        <value>{{ .Values.dbUrl }}</value>
+    </property>
+    <property>
+        <name>javax.jdo.option.ConnectionDriverName</name>
+        <value>{{ .Values.dbDriver }}</value>
+    </property>
+    <property>
+        <name>javax.jdo.option.ConnectionUserName</name>
+        <value>{{ .Values.dbUser }}</value>
+    </property>
+    <property>
+        <name> javax.jdo.option.ConnectionPassword</name>
+        <value>{{ .Values.dbPassword }}</value>
+    </property>
+    <property>
+        <name>hive.metastore.warehouse.dir</name>
+        <value>{{ .Values.s3Bucket }}</value>
+    </property>
+    <property>
+        <name>metastore.expression.proxy</name>
+        <value>org.apache.hadoop.hive.metastore.DefaultPartitionExpressionProxy</value>
+    </property>
+    <property>
+        <name>metastore.task.threads.always</name>
+        <value>org.apache.hadoop.hive.metastore.events.EventCleanerTask,org.apache.hadoop.hive.metastore.MaterializationsCacheCleanerTask</value>
+    </property>
+</configuration>
