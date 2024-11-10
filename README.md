@@ -45,3 +45,68 @@ This architecture demonstrates how Trino is set up on **Amazon EKS** to process 
 This architecture allows scalable, cost-effective, and efficient data analytics processing, leveraging Trino’s query optimization, Kubernetes' orchestration capabilities, and S3's storage.
 
 ## How to run
+### Set up Hive Metastore
+To set up a Hive Metastore for our Trino cluster, we need to create a custom container image. As of now, there is no official standalone Hive Metastore container image, so we’ll build one ourselves using the latest Hive and Hadoop versions for better compatibility and future-proofing.
+
+1. Hive and Hadoop Versions:
+   - We will use Hive version 4.0.0 and Hadoop version 3.4.0 for our custom image.
+   - This setup also utilizes AWS SDK v2 from the latest Hadoop update, which provides improved functionality for AWS services.
+2. Building the Container Image:
+   - The Dockerfile and entry point script needed to build the Hive Metastore container image are available under `hive-metastore/docker`. These have been used with some modifications from [here](https://github.com/trinodb/trino/blob/master/core/docker/Dockerfile)
+
+```
+cd hive-metastore/docker
+# Log in to AWS ECR
+aws ecr get-login-password --region <REGION> | docker login --username AWS --password-stdin <ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com
+
+# Attach the AmazonEC2ContainerRegistryPowerUser policy to a specific user
+aws iam attach-user-policy --policy-arn arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser --user-name <USER_NAME>
+
+# Simulate the permissions for a specific IAM user to verify access to ECR
+aws iam simulate-principal-policy --policy-source-arn arn:aws:iam::<ACCOUNT_ID>:user/<USER_NAME> --action-names ecr:GetAuthorizationToken
+
+# Build the Docker image for Hive Metastore and tag it with the ECR repository URI
+docker build -t <ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com/<REPOSITORY_NAME> .
+
+# Push the Docker image to the ECR repository
+docker push <ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com/<REPOSITORY_NAME>
+```
+### Setup EKS and AWS Resources
+I have separated the cloud infrastructure and the cluster-level configurations into two distinct subdirectories for better modularity. To set up the AWS and EKS and then cluster configs we will create a `terraform.tfvars` file. For cloud-infra the file should look something like
+```
+name                                 = "<CLUSTER-NAME>"
+region                               = "<REGION>"
+kube_namespace_name                  = "trino"
+cluster_endpoint_public_access_cidrs = ["<YOUR_IP>/32"]
+vpc_cidr                             = "10.0.0.0/24"
+kubeconfig_location                  = "../../local/kubeconfig.yaml"
+kube_service_account_name            = "s3-access"
+enable_eks                           = true
+enable_rds                           = true
+```
+To run the TF files
+```
+cd terraform/cloud-infra
+terraform init
+terraform plan -var-file="terraform.tfvars" 
+terraform apply -var-file="terraform.tfvars" 
+```
+After this set up the kubernetes config
+```
+aws eks --region <REGION> update-kubeconfig --name <CLUSTER-NAME>
+kubectl config use-context arn:aws:eks:<REGION>:<ACCOUNT_ID>:cluster/<CLUSTER-NAME>
+kubectl config current-context
+```
+
+For cluster-configs the file should look something like
+```
+name                      = "<cluster-name>"
+region                    = "<region>"
+kube_namespace_name       = "trino"
+kube_service_account_name = "s3-access"
+```
+Run the TF files similarly just cd into terraform/cluster-config
+
+### Start the cluster
+1. Confirm the pods are up `kubectl get pods --namespace trino`
+2. Start the cluster `kubectl port-forward service/trino 8080 --namespace trino`
