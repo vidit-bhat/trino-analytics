@@ -1,5 +1,5 @@
 server:
-  workers: 1
+  workers: 3
 additionalCatalogs:
   s3_hive: |-
     connector.name=hive
