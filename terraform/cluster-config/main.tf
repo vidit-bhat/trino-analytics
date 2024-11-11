@@ -66,7 +66,7 @@ resource "helm_release" "metastore" {
 
   set {
     name  = "image"
-    value = "ghcr.io/binayakd/metastore:4.0.0-hadoop-3.4.0"
+    value = "ghcr.io/vidit-bhat/hive-metastore:latest"
   }
 
   set {
