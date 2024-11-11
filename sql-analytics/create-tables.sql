@@ -1,8 +1,10 @@
 -- create schema
+DROP SCHEMA s3_hive.test;
 CREATE SCHEMA s3_hive.test
 WITH (location = 's3a://trino-analytics/');
 
 -- create raw log table
+DROP TABLE IF EXISTS s3_hive.test.raw_logs;
 CREATE TABLE IF NOT EXISTS s3_hive.test.raw_logs (
      log VARCHAR,
      ip VARCHAR,

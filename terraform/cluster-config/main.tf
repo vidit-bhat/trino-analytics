@@ -62,7 +62,7 @@ resource "helm_release" "metastore" {
 
   name      = "metastore"
   namespace = var.kube_namespace_name
-  chart     = "../../metastore/helm-chart"
+  chart     = "../../hive-metastore/helm-chart"
 
   set {
     name  = "image"
@@ -89,7 +89,7 @@ resource "helm_release" "metastore" {
 
   set {
     name  = "s3Bucket"
-    value = "s3://trino-on-eks"
+    value = "s3://trino-analytics"
   }
 
   set {
