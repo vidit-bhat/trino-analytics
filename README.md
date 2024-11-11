@@ -40,7 +40,7 @@ This architecture demonstrates how Trino is set up on **Amazon EKS** to process 
    - After processing, the transformed data is also stored back in the S3 bucket in Parquet format, partitioned by date for efficient querying.
 
 4. **Metadata Management**:
-   - The Hive Metastore provides metadata information to Trino, allowing it to handle complex queries with partitioned data efficiently.
+   - The Hive Metastore provides metadata information to Trino, allowing it to handle complex queries with partitioned data efficiently. We use a postgres instance for storage.
 
 This architecture allows scalable, cost-effective, and efficient data analytics processing, leveraging Trino’s query optimization, Kubernetes' orchestration capabilities, and S3's storage.
 
