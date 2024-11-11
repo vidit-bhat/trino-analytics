@@ -56,20 +56,14 @@ To set up a Hive Metastore for our Trino cluster, we need to create a custom con
 
 ```
 cd hive-metastore/docker
-# Log in to AWS ECR
-aws ecr get-login-password --region <REGION> | docker login --username AWS --password-stdin <ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com
+# Log in to GHCR
+docker login ghcr.io -u <GITHUB_USERNAME> -p <PERSONAL_ACCESS_TOKEN>
 
-# Attach the AmazonEC2ContainerRegistryPowerUser policy to a specific user
-aws iam attach-user-policy --policy-arn arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser --user-name <USER_NAME>
+# Build the Docker image for Hive Metastore and tag it with the GHCR repository URI
+docker build -t ghcr.io/<GITHUB_USERNAME>/hive-metastore:latest .
 
-# Simulate the permissions for a specific IAM user to verify access to ECR
-aws iam simulate-principal-policy --policy-source-arn arn:aws:iam::<ACCOUNT_ID>:user/<USER_NAME> --action-names ecr:GetAuthorizationToken
-
-# Build the Docker image for Hive Metastore and tag it with the ECR repository URI
-docker build -t <ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com/<REPOSITORY_NAME> .
-
-# Push the Docker image to the ECR repository
-docker push <ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com/<REPOSITORY_NAME>
+# Push the Docker image to the GHCR repository
+docker push ghcr.io/<GITHUB_USERNAME>/hive-metastore:latest
 ```
 ### Setup EKS and AWS Resources
 I have separated the cloud infrastructure and the cluster-level configurations into two distinct subdirectories for better modularity. To set up the AWS and EKS and then cluster configs we will create a `terraform.tfvars` file. For cloud-infra the file should look something like
