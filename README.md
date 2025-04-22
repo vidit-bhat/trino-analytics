@@ -1,7 +1,7 @@
 # trino-analytics
 
 ## Overview
-This project demonstrates data engineering skills in handling large-scale log data using Trino and Amazon S3, while also utilizing the Parquet format for storage. The goal is to simulate, process, and transform high-traffic website log data to generate analytics suitable for executive reporting. This project emphasizes efficient data processing, query optimization, and performance.
+This project demonstrates my (terrible) data engineering skills in handling large-scale log data using Trino and Amazon S3, while also utilizing the Parquet format for storage. The goal is to simulate, process, and transform high-traffic website log data to generate analytics suitable for executive reporting. This project emphasizes efficient data processing, query optimization, and performance.
 
 # Architecture
 #<img width="655" alt="Architecture" src="https://github.com/user-attachments/assets/c24b5e79-393a-4c1b-a2d9-e61b35d2aec4">
